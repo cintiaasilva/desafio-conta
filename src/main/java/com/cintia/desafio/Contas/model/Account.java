@@ -1,16 +1,18 @@
 package com.cintia.desafio.Contas.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
-@Table(name = "conta")
+@Table(name = "tb_conta")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +29,5 @@ public class Account {
     @Column(name = "valor_ajustado", nullable = false)
     private BigDecimal adjustedAmount;
     @Column(name = "dias_de_atraso", nullable = false)
-    private Integer daysLate;
+    private int daysLate;
 }
