@@ -1,6 +1,7 @@
 package com.cintia.desafio.Contas.service;
 
 import com.cintia.desafio.Contas.dto.AccountRequestDTO;
+import com.cintia.desafio.Contas.dto.AccountResponseDTO;
 import com.cintia.desafio.Contas.model.Account;
 import com.cintia.desafio.Contas.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -119,4 +123,55 @@ public class AccountServiceTest {
         assertEquals(expectedAdjustedValue, accountEntity.getAdjustedAmount(), "O valor ajustado deve ser R$ 106.80");
         verify(accountRepository, times(1)).save(accountEntity);
     }
+    private Account createAccountEntity(String name, BigDecimal originalValue , LocalDate dueDate) {
+        Account entity = new Account();
+        entity.setName(name);
+        entity.setDueDate(dueDate);
+        entity.setOriginalValue(originalValue);
+        entity.setAdjustedAmount(originalValue);
+        entity.setDaysLate(0);
+        return entity;
+    }
+    private AccountResponseDTO createAccountResponseDTO(String name, BigDecimal adjustedValue, int daysLate) {
+        return new AccountResponseDTO(name, new BigDecimal("100.00"), LocalDate.now(), adjustedValue, daysLate);
+    }
+
+
+    @Test
+    void mustReturnListOfAccounts_WhenListIsNotEmpty() {
+        Account entity1 = createAccountEntity("Conta A", new BigDecimal("100.00"), LocalDate.now().minusDays(5));
+        Account entity2 = createAccountEntity("Conta B",  new BigDecimal("200.00"), LocalDate.now().minusDays(1));
+        List<Account> accountList = Arrays.asList(entity1, entity2);
+        AccountResponseDTO dto1 = createAccountResponseDTO("Conta A", new BigDecimal("100.00"), 0);
+        AccountResponseDTO dto2 = createAccountResponseDTO("Conta B", new BigDecimal("200.00"), 0);
+
+        when(accountRepository.findAll()).thenReturn(accountList);
+
+        when(mapper.map(entity1, AccountResponseDTO.class)).thenReturn(dto1);
+        when(mapper.map(entity2, AccountResponseDTO.class)).thenReturn(dto2);
+
+        List<AccountResponseDTO> resultList = accountService.listRegisteredAccounts();
+
+        assertNotNull(resultList, "A lista não deve ser nula.");
+        assertEquals(2, resultList.size(), "A lista deve conter 2 elementos.");
+        verify(accountRepository, times(1)).findAll();
+        verify(mapper, times(2)).map(any(Account.class), eq(AccountResponseDTO.class));
+        assertEquals(dto1.getName(), resultList.get(0).getName());
+        assertEquals(dto2.getName(), resultList.get(1).getName());
+    }
+
+    @Test
+    void mustReturnEmptyList_WhenNoAccountsAreRegistered() {
+        List<Account> emptyList = Collections.emptyList();
+
+        when(accountRepository.findAll()).thenReturn(emptyList);
+
+        List<AccountResponseDTO> resultList = accountService.listRegisteredAccounts();
+
+        verify(accountRepository, times(1)).findAll();
+        verify(mapper, never()).map(any(), any());
+        assertNotNull(resultList, "A lista não deve ser nula, deve ser vazia.");
+        assertTrue(resultList.isEmpty(), "A lista deve estar vazia.");
+    }
+
 }

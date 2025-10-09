@@ -1,6 +1,7 @@
 package com.cintia.desafio.Contas.controller;
 
 import com.cintia.desafio.Contas.dto.AccountRequestDTO;
+import com.cintia.desafio.Contas.dto.AccountResponseDTO;
 import com.cintia.desafio.Contas.model.Account;
 import com.cintia.desafio.Contas.service.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,12 +15,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 @WebMvcTest(AccountController.class)
 class AccountControllerTest {
@@ -101,5 +106,31 @@ class AccountControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").isMap())
                 .andExpect(jsonPath("$.name").exists());
+    }
+
+    @Test
+    void mustReturn200Ok_WhenListingAccounts() throws Exception {
+        AccountResponseDTO dto = new AccountResponseDTO("Conta Teste", new BigDecimal("100.00"), LocalDate.now(), new BigDecimal("100.00"), 0);
+        List<AccountResponseDTO> mockList = Collections.singletonList(dto);
+
+        when(accountService.listRegisteredAccounts()).thenReturn(mockList);
+
+        mockMvc.perform(get("/api/conta")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].name").value("Conta Teste"))
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void mustReturn200OkAndEmptyList_WhenNoAccountsAreFound() throws Exception {
+        when(accountService.listRegisteredAccounts()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/conta")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
     }
 }
