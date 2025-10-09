@@ -1,13 +1,15 @@
 package com.cintia.desafio.Contas.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @AllArgsConstructor
-@Getter
+@Data
+@NoArgsConstructor
 public class AccountResponseDTO {
     private String name;
     private BigDecimal originalValue;
