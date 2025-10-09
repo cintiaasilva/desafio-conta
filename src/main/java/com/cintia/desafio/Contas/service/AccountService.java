@@ -1,9 +1,9 @@
 package com.cintia.desafio.Contas.service;
 
 import com.cintia.desafio.Contas.dto.AccountRequestDTO;
+import com.cintia.desafio.Contas.dto.AccountResponseDTO;
 import com.cintia.desafio.Contas.model.Account;
 import com.cintia.desafio.Contas.repository.AccountRepository;
-import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -38,7 +39,7 @@ public class AccountService {
         this.mapper = mapper;
     }
 
-    public Account savePaidAccount(@Valid AccountRequestDTO accountDTO){
+    public Account savePaidAccount(AccountRequestDTO accountDTO){
         Account accountEntity = mapper.map(accountDTO, Account.class);
 
         LocalDate paymentDate = accountDTO.getPaymentDate();
@@ -55,6 +56,12 @@ public class AccountService {
             accountRepository.save(accountEntity);
         }
         return accountEntity;
+    }
+
+    public List<AccountResponseDTO> listRegisteredAccounts(){
+        return accountRepository.findAll().stream()
+                .map(account -> mapper.map(account, AccountResponseDTO.class))
+                .collect(Collectors.toList());
     }
 
     private void latePaymentRules(Account accountEntity){
