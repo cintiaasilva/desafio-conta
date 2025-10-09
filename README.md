@@ -193,7 +193,7 @@ Este projeto foi desenvolvido com foco em:
 - Testabilidade.
 - Clareza de regras de negócio.
 - Entrega funcional e conteinerizada.
-- Utilização da metologia kanban para organização e planejamento na ferramenta Trello, clique [aqui]([https://www.linkedin.com/in/cintia-silva26/](https://trello.com/invite/b/68e52fe8b73569c46052de9a/ATTI8ca259398970a30c61e863218434e4c1B6C5FE97/gerenciador-de-contas)) para visualização da organização. 
+- Utilização da metologia kanban para organização e planejamento na ferramenta Trello, clique [aqui](https://trello.com/invite/b/68e52fe8b73569c46052de9a/ATTI8ca259398970a30c61e863218434e4c1B6C5FE97/gerenciador-de-contas) para visualização da organização. 
 
 O uso do Swagger substitui o front-end Angular para simplificar a validação e manter a API clara e testável.
 
