@@ -69,7 +69,7 @@ class AccountControllerTest {
         mockMvc.perform(post("/api/conta/pagamento")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isCreated()) // Espera o status 201 CREATED
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Conta de Teste"))
                 .andExpect(jsonPath("$.adjustedAmount").value(100.00))
@@ -94,7 +94,7 @@ class AccountControllerTest {
     @Test
     void mustReturn400BadRequest_WhenDTOIsInvalid_MissingName() throws Exception {
         AccountRequestDTO invalidDTO = new AccountRequestDTO(
-                null, // Nome nulo
+                null,
                 new BigDecimal("100.00"),
                 LocalDate.of(2025, Month.OCTOBER, 10),
                 LocalDate.of(2025, Month.OCTOBER, 10)

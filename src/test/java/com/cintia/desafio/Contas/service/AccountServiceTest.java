@@ -105,9 +105,8 @@ public class AccountServiceTest {
 
     @Test
     void mustIncludePaidAccount_WhenLateExceeds5Days() {
-        // GIVEN (Dado)
         LocalDate dueDate = LocalDate.of(2025, Month.OCTOBER, 10);
-        LocalDate paymentDate = LocalDate.of(2025, Month.OCTOBER, 16); // 6 dias de atraso
+        LocalDate paymentDate = LocalDate.of(2025, Month.OCTOBER, 16);
         BigDecimal originalValue = new BigDecimal("100.00");
         int expectedDaysLate = 6;
         BigDecimal expectedAdjustedValue = new BigDecimal("106.80").setScale(2, RoundingMode.HALF_UP);
